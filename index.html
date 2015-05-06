@@ -19,123 +19,114 @@
     </section>
 
     <section class="main-content">
-      <p>&lt;!DOCTYPE html&gt;</p>
+      <hr>
 
-<p></p>
+<p>title: '''Dark Horse'' Research in Tennis Tournaments'
+author: "Lin Xu"</p>
 
-<p></p>
+<h2>
+<a id="output-html_document" class="anchor" href="#output-html_document" aria-hidden="true"><span class="octicon octicon-link"></span></a>output: html_document</h2>
 
-<p>
+<p>Abstract:
+   As we know, 'dark horse' is a popular word in sports area. People always care about the dark horse since it is related to the prediction before match. In this project, we will focus on tennis tournaments and find some patterns about dark horse in different aspects.</p>
 
-</p>
+<p>Data:
+1. Resource:
+For female matches: <a href="http://tennis-data.co.uk/2014w/2014.zip">linked phrase</a>
+For male mathes: <a href="http://tennis-data.co.uk/2014w/2014.zip">linked phrase</a>
+2. Description: The data included all the tennis mathes results in 2014 (both male and female). 
+Important Key to data:
+Tournament = Name of tounament (including sponsor if relevant)
+Series = Name of ATP tennis series (Grand Slam, Masters, International or International Gold)
+Tier = Tier (tournament ranking) of WTA tennis series.
+Court = Type of court (outdoors or indoors)
+Surface = Type of surface (clay, hard, carpet or grass)
+Winner = Match winner
+Loser = Match loser
+WRank = ATP Entry ranking of the match winner as of the start of the tournament
+LRank = ATP Entry ranking of the match loser as of the start of the tournament
+AvgW= Average odds of match winner (as shown by Oddsportal.com)
+AvgL= Average odds of match loser (as shown by Oddsportal.com)</p>
 
-<p></p>
+<p>Analysis:
+1. Abstract all the matches that 'dark horse' occurred.
+2. In term of players, calculate:
+dark win rate: percentage of becoming a 'dark horse'
+dark lose rate: percentage of being defeated by a 'dark horse'
+pre adv rate: percentage of having advantages before match
+stability: percentage of being consisitent with the prior prediction
+3. In term of tournames, calculate:
+dark horse rate: percentage of having 'dark horse' in the tournament
+4. Compare the male and female data</p>
 
-<p></p>Dark Horse Research in Tennis Tournaments
+<p>Visualization:
+Part 1: Use the scatter plot to analysis different players and then classify them with the result:</p>
 
+<pre lang="r,echo=FALSE"><code>setwd('D:/R/final_project')
+library(ggplot2)
+library(plyr)
+library(reshape)
+wta_player = read.csv('wta_player.csv')
+atp_player = read.csv('atp_player.csv')
+wta_player$gender = 'female'
+atp_player$gender = 'male'
+Player = rbind(wta_player,atp_player)
+ggplot(Player,aes(x=dark_win_per,y=dark_los_per,label=Name,colour=gender))+geom_point(size=3)+geom_text(size=3)+
+  geom_segment(aes(x = -0.02, y = -0.04, xend = -0.02, yend = 0.63),col='blue') + 
+  geom_segment(aes(x =  0.2, y = -0.04, xend =  0.2, yend = 0.63),col='blue') + 
+  geom_segment(aes(x =  0.4, y = -0.04, xend =  0.4, yend = 0.63),col='blue') + 
+  geom_segment(aes(x =  0.6, y = -0.04, xend =  0.6, yend = 0.63),col='blue') + 
+  geom_segment(aes(x = -0.04, y = -0.02, xend = 0.63, yend = -0.02),col='blue') +
+  geom_segment(aes(x = -0.04, y = .2, xend = 0.63, yend = 0.2),col='blue') +
+  geom_segment(aes(x = -0.04, y = .4, xend = 0.63, yend = 0.4),col='blue') +
+  geom_segment(aes(x = -0.04, y = .6, xend = 0.63, yend = 0.6),col='blue') +
+  annotate("text", x = .05, y = 0.63, label = "unlikey to be dark house",size = 5)+
+  annotate("text", x = .3, y = 0.63, label = "normal",size = 5)+
+  annotate("text", x = .5, y = 0.63, label = "likely to be dark house",size = 5)+
+  annotate("text", x = -.05, y = 0.1, label = "unlikely to be 'darked'",size = 4)+
+  annotate("text", x = -.05, y = 0.3, label = "normal",size = 4)+
+  annotate("text", x = -.05, y = 0.5, label = "likely to be 'darked'",size = 4)
+ggplot(Player,aes(x=adv_per,y=stability,label=Name,colour=gender))+geom_point(size=3)+geom_text(size=3)+
+  annotate("text", x = .4, y = 0.91, label = "normal player",size = 5)+
+  annotate("text", x = .7, y = 0.91, label = "good player",size = 5)+
+  annotate("text", x = .85, y = 0.91, label = "advanced player",size = 5)+
+  annotate("text", x = .95, y = 0.91, label = "top player",size = 5)+
+  geom_segment(aes(x = 0.2, y = .5, xend = 0.2, yend = 0.95),col='blue') + 
+  geom_segment(aes(x = 0.6, y = .5, xend = 0.6, yend = 0.95),col='blue') + 
+  geom_segment(aes(x = 0.8, y = .5, xend = 0.8, yend = 0.95),col='blue') + 
+  geom_segment(aes(x = 0.9, y = .5, xend = 0.9, yend = 0.95),col='blue') + 
+  geom_segment(aes(x = 0.1, y = .6, xend = 1, yend = 0.6),col='blue') +
+  geom_segment(aes(x = 0.1, y = .7, xend = 1, yend = 0.7),col='blue') +
+  geom_segment(aes(x = 0.1, y = .8, xend = 1, yend = 0.8),col='blue') +
+  geom_segment(aes(x = 0.1, y = .9, xend = 1, yend = 0.9),col='blue') +
+  annotate("text", x = .15, y = 0.55, label = "very unstable",size = 5)+
+  annotate("text", x = .15, y = 0.65, label = "unstable",size = 5)+
+  annotate("text", x = .15, y = 0.75, label = "stable",size = 5)+
+  annotate("text", x = .15, y = 0.85, label = "vert stable",size = 5)
+</code></pre>
 
+<p>Part 2: Use the boxplot to compare dark horse rate of tournaments in terms of level, surface, type</p>
 
-<p>
+<pre lang="r,"><code>wta_tour = read.csv('wta_tournament.csv')
+atp_tour = read.csv('atp_tournament.csv')
+wta_tour$gender = 'female'
+atp_tour$gender = 'male'
+levels(atp_tour$Tier)= c('International','Premier','Grand Slam','PremierM','SEC')
+tour=rbind(wta_tour,atp_tour)
+ggplot(tour,aes(x=Tier,y=dark_per,label=Tournament,colour=gender))+geom_point(size=5)+ facet_grid(. ~ type)
+ggplot(tour,aes(x=Tier,y=dark_per,colour=gender))+geom_boxplot()
+ggplot(tour,aes(x=Tier,y=dark_per,colour=gender))+geom_boxplot()+facet_grid(. ~ type)
+</code></pre>
 
-</p>
+<p>Part 3: Compare the male and female player</p>
 
+<pre lang="r,"><code>ggplot(Player,aes(x=gender,y=stability))+geom_boxplot()
+ggplot(Player,aes(x=gender,y=adv_per))+geom_boxplot()
+ggplot(Player,aes(x=gender,y=dark_win_per))+geom_boxplot()
+ggplot(Player,aes(x=gender,y=dark_los_per))+geom_boxplot()
+</code></pre>
 
-
-code{white-space: pre;}
-
-<p></p>
-
-
-
-
-  pre:not([class]) {
-    background-color: white;
-  }
-
-
-
-
-<p></p>
-
-<p></p>
-
-
-.main-container {
-  max-width: 940px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-
-<div>
-
-
-<div id="header">
-<h1>
-<a id="dark-horse-research-in-tennis-tournaments" class="anchor" href="#dark-horse-research-in-tennis-tournaments" aria-hidden="true"><span class="octicon octicon-link"></span></a>‘Dark Horse’ Research in Tennis Tournaments</h1>
-<h4>
-<a id="lin-xu" class="anchor" href="#lin-xu" aria-hidden="true"><span class="octicon octicon-link"></span></a><em>Lin Xu</em>
-</h4>
-</div>
-
-<p>Abstract:</p>
-
-<p>As we know, ‘dark horse’ is a popular word in sports area. People always care about the dark horse since it is related to the prediction before match. In this project, we will focus on tennis tournaments and find some patterns about dark horse in different aspects.</p>
-
-<p>Data:</p>
-
-<p>1.Resource:<br> For female matches: <a href="http://tennis-data.co.uk/2014w/2014.zip">linked phrase</a><br> For male mathes: <a href="http://tennis-data.co.uk/2014w/2014.zip">linked phrase</a></p>
-
-<p>2.Description: The data included all the tennis mathes results in 2014 (both male and female).</p>
-
-<pre><code> Tournament = Name of tounament (including sponsor if relevant)
- Series = Name of ATP tennis series (Grand Slam, Masters, International or International Gold)
- Tier = Tier (tournament ranking) of WTA tennis series.
- Court = Type of court (outdoors or indoors)
- Surface = Type of surface (clay, hard, carpet or grass)
- Winner = Match winner
- Loser = Match loser
- WRank = ATP Entry ranking of the match winner as of the start of the tournament
- LRank = ATP Entry ranking of the match loser as of the start of the tournament
- AvgW= Average odds of match winner (as shown by Oddsportal.com)
- AvgL= Average odds of match loser (as shown by Oddsportal.com)</code></pre>
-
-<p>Analysis:</p>
-
-<p>1 Abstract all the matches that ‘dark horse’ occurred.<br> 2 In term of players, calculate:</p>
-
-<pre><code> dark win rate: percentage of becoming a 'dark horse'
- dark lose rate: percentage of being defeated by a 'dark horse'
- pre adv rate: percentage of having advantages before match
- stability: percentage of being consisitent with the prior prediction</code></pre>
-
-<p>3.In term of tournames, calculate:</p>
-
-<pre><code> dark horse rate: percentage of having 'dark horse' in the tournament</code></pre>
-
-<p>4.Compare the male and female data Visualization:</p>
-
-<p>Part 1: Use the scatter plot to analysis different players and then classify them with the result:</p>
-
-<p><img title alt width="1632"><img title alt width="1632"> Part 2: Use the boxplot to compare dark horse rate of tournaments in terms of level, surface, type</p>
-
-<p><img title alt width="1440"><img title alt width="1440"><img title alt width="1440"> Part 3: Compare the male and female player</p>
-
-<p><img title alt width="576"><img title alt width="576"><img title alt width="576"><img title alt width="576"> </p>
-
-<p>(file:///C:/Users/dell/Desktop/xulin.html) </p>
-
-<p></p>
-</div>
-
-
-
-
-
-
-
-<p>
-</p>
+<p>aaa</p>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/xulinlucas/final">Final</a> is maintained by <a href="https://github.com/xulinlucas">xulinlucas</a>.</span>
